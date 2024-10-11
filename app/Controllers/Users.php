@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
+use App\Models\User;
 
 class Users extends ResourceController
 {
@@ -38,6 +39,13 @@ class Users extends ResourceController
     public function show($id = null)
     {
         //
+        $user = $this->db->table('users')->getWhere(['id' => $id])->getRow();
+        $data['user'] = $user;
+        if (!$user) {
+            return redirect()->to(base_url('users'))->with('status', 'User not found');
+        }
+        
+        return view('show_form', $data);
     }
 
     /**
@@ -84,6 +92,10 @@ class Users extends ResourceController
         $user = $this->db->table('users')->getWhere(['id' => $id])->getRow();
         $data['user'] = $user;
 
+        if (!$user) {
+            return redirect()->to(base_url('users'))->with('status', 'User not found');
+        }
+
         return view('update_form', $data);
     }
 
@@ -102,14 +114,19 @@ class Users extends ResourceController
             'name' => $this->request->getPost('name'),
             'age' => $this->request->getPost('age'),
         ];
-        // $result = $this->db->table('users')->where('id', $id)->update($data);
+        $result = $this->db->table('users')->where('id', $id)->update($data);
 
         // $status = $result ? "Record updated successfully" : "Something is wrong";
 
         // return redirect()->to(base_url('users'))->with('status', $status);
     
-        $result = $user->update($id, $data);
-        $status = ($result) ? 'Records has been updated :)': 'Records has not been updated :(';
+        // $result = $user->update($id, $data);
+        
+        $status = ($result) ? "Record updated successfully": "Something is wrong";
+
+        if (!$user) {
+            return redirect()->to(base_url('users'))->with('status', 'User not found');
+        }
         
         return redirect()->to(base_url('users'))->with('status', $status);
     }

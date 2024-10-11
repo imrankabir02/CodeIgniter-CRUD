@@ -21,7 +21,7 @@
         <a href="<?= base_url('/users/'.$user->id.'/edit') ?>" class="btn btn-primary">Edit</a>
       </td>
       <td>
-        <a class="btn btn-danger" onclick='if(confirm(`Do you want delete this record`)) { document.forms[`form_<?= $user->id ?>`].submit() }'>Delete</a>
+        <a class="btn btn-danger" onclick='{ document.forms[`form_<?= $user->id ?>`].submit() }'>Delete</a>
       </td>
     </tr>
     <!-- DELETE Form -->
