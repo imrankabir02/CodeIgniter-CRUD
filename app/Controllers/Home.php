@@ -18,7 +18,7 @@ class Home extends BaseController
 
     public function index()
     {
-        return view('posts/index',[
+        return view('home/index',[
             "posts" => $this->model->orderBy("created_at", "DESC")->paginate(3),
             "pager" => $this->model->pager,
             "controller" => $this

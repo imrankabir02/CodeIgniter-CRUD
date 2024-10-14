@@ -16,10 +16,7 @@ Home
                     <img src="<?php echo site_url('posts_images/default.png'); ?>" width="150" height="150" class="card-img-top" alt="...">
                 <?php endif; ?> -->
                 <div class="card-body">
-                    <!-- <span class="badge bg-primary">
-                        <?php
-                        echo $controller->getUserById($post->user_id); ?>
-                    </span> -->
+
                     <span class="badge bg-danger">
                         <?php
                         echo $post->created_at->humanize(); ?>

@@ -3,10 +3,8 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use App\Models\Post;
-// use App\Entities\Post;
 
 class Posts extends BaseController
 {
@@ -18,45 +16,77 @@ class Posts extends BaseController
 
     public function index()
     {
-        return view('home/index',[
-            "posts" => $this->model->orderBy("created_at", "DESC"),
-            // "pager" => $this->model->pager,
+        $posts = $this->model->findAll();
+        return view('posts/index', [
+            "posts" => $posts,
             "controller" => $this
         ]);
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         $post = $this->model->find($id);
-        if(!$post) {
+        if (!$post) {
             throw PageNotFoundException::forPageNotFound("Article $id not found !");
         }
-        return view('posts/show',[
+        return view('posts/show', [
             "post" => $post,
             "controller" => $this
         ]);
     }
 
-    public function create(){
+    public function create()
+    {
         return view('posts/create');
     }
 
-    public function store() {
-        $post = new Post($this->request->getPost());
-        $data = $this->model->insert($post);
+    public function store()
+    {
+        $this->validate([
+            'title' => 'required|max_length[100]',
+            'description' => 'required'
+        ]);
 
-        if ($data) {
+        if ($this->validator->getErrors()) {
+            return redirect()->back()
+                ->with('errors', $this->validator->getErrors())
+                ->withInput();
+        }
+
+        $data = $this->request->getPost();
+
+        // Prepare data
+        $data = [
+            'title' => $this->request->getPost('title'),
+            'description' => $this->request->getPost('description'),
+            // 'post_image' => $this->request->getPost('image'), // Uncomment if needed
+        ];
+
+        // $post = new Post($this->request->getPost());
+        // $data = $this->model->insert($post);
+        if ($this->model->insert($data)) {
             return redirect()->to("/posts")->with("success", "Article added");
         } else {
             return redirect()->back()
                 ->with('errors', $this->model->errors())
                 ->withInput();
         }
+
+        // if ($data) {
+        //     return redirect()->to("/posts")->with("success", "Article added");
+        // } else {
+        //     return redirect()->back()
+        //         ->with('errors', $this->model->errors())
+        //         ->withInput();
+        // }
+        // log_message('error', print_r($this->model->errors(), true));
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $post = $this->model->find($id);
 
-        if($post) {
+        if ($post) {
             return view('posts/edit', [
                 "post" => $post,
             ]);

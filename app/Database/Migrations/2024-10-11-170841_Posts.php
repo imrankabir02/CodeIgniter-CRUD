@@ -12,7 +12,6 @@ class Posts extends Migration
 			'id'          => [
 				'type'           => 'INT',
 				'constraint'     => 5,
-				'unsigned'       => true,
 				'auto_increment' => true,
 			],
 			'title'       => [
